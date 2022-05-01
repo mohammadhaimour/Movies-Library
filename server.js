@@ -1,12 +1,32 @@
 'use strict'
-const express = require('express');
-const movieData = require('./data.json');
-const app = express();
-const port = 3000;
+const express = require('express');//require the package
+const app = express();//create an express app 
+const PORT = 3000;
+const movieData = require('./Movie Data/data.json');
 
+
+
+//route
+app.listen(PORT, handleListener);
+app.get('/favorite', handleFavorite);
 app.get('/', handleData);
+app.use('/error', (req, res) => res.send(error()));
+app.get('*', handelNotFound);
+
+
+
+
+//function
+function handleListener() {
+    console.log(`i am a live on port ${PORT}`);
+}
+
+function handleFavorite(reg, res) {
+    res.send("Welcom to Favorit page");
+}
 
 function handleData(req, res) {
+    // console.log(movieData);
     // res.send("Welcom to Favorit page1");
     let result = [];
     let newMovie = new Movie(movieData.title, movieData.poster_path, movieData.overview);
@@ -14,19 +34,12 @@ function handleData(req, res) {
     res.json(result);
 }
 
-app.get('/favorite', handleFavorite);
+function handelNotFound(req, res) {
 
-function handleFavorite(reg, res) {
-    res.send("Welcom to Favorit page");
+    res.status(404).send("Not found");
 
 }
 
-app.listen(port, handleListener);
-function handleListener() {
-    console.log(`"i am a live on port ${port}"`);
-}
-
-app.use('/error', (req, res) => res.send(error()));
 
 app.use(function (err, req, res, text) {
     console.log(err.stack);
@@ -35,16 +48,17 @@ app.use(function (err, req, res, text) {
     res.send("Sorry something wrong");
 });
 
-app.use(function (req, res, text) {
-    res.status(404);
-    res.type('taxt/plain');
-    res.send("not found");
-});
+
+// app.use(function (req, res, text) {
+//     res.status(404);
+//     res.type('taxt/plain');
+//     res.send("not found");
+// });
 
 
 
 
-
+//constructor
 function Movie(title, poster_path, overview) {
     this.title = title;
     this.poster_path = poster_path;
